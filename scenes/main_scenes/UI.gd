@@ -1,6 +1,7 @@
 extends CanvasLayer
 
-
+onready var hp_bar = $HUD/InfoBar/H/HP
+onready var hp_bar_tween = $HUD/InfoBar/H/HP/Tween
 
 func set_tower_preview(tower_type: String, mouse_position: Vector2):
 	var drag_tower = load("res://scenes/turrets/" + tower_type + ".tscn").instance()
@@ -55,3 +56,14 @@ func _on_SpeedUp_pressed():
 		Engine.set_time_scale(1.0)
 	else:
 		Engine.set_time_scale(2.0) # Replace with function body.
+
+
+func update_health_bar(base_health):
+	hp_bar_tween.interpolate_property(hp_bar, "value", hp_bar.value, base_health, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+	hp_bar_tween.start()
+	if base_health >= 60:
+		hp_bar.set_tint_progress("3cc510") #green
+	elif base_health >= 25:
+		hp_bar.set_tint_progress("e1be32") #orange
+	else:
+		hp_bar.set_tint_progress("e11e1e") #red

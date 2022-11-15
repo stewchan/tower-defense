@@ -1,12 +1,16 @@
 extends Node2D
 
+signal game_finished(result)
+
 onready var map_node = $Map1
+onready var ui = $UI
 
 var build_mode := false
 var build_valid := false
 var build_location: Vector2
 var build_type: String
 var build_tile
+var base_health = 100
 
 var current_wave := 0
 var enemies_in_wave := 0
@@ -39,7 +43,7 @@ func start_next_wave():
 	spawn_enemies(wave_data)
 
 func retrieve_wave_data() -> Array:
-	var wave_data = [["BlueTank", 3.0], ["BlueTank", 0.1]]
+	var wave_data = [["BlueTank", 1.0], ["BlueTank", 1.1], ["BlueTank", 1.1], ["BlueTank", 1.1], ["BlueTank", 0.1]]
 	current_wave += 1
 	enemies_in_wave = wave_data.size()
 	return wave_data
@@ -47,6 +51,7 @@ func retrieve_wave_data() -> Array:
 func spawn_enemies(wave_data: Array):
 	for i in wave_data:
 		var new_enemy = load("res://scenes/enemies/" + i[0] + ".tscn").instance()
+		new_enemy.connect("base_damage", self, "on_base_damage")
 		map_node.get_node("Path").add_child(new_enemy, true)
 		yield(get_tree().create_timer(i[1]), "timeout")
 
@@ -99,3 +104,10 @@ func update_tower_preview():
 	else:
 		$UI.update_tower_preview(tile_position, "adff4545")
 		build_valid = false
+
+
+func on_base_damage(damage):
+	base_health -= damage
+	ui.update_health_bar(base_health)
+	if base_health <= 0:
+		emit_signal("game_finished", false)

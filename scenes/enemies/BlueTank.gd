@@ -1,8 +1,10 @@
 extends PathFollow2D
 
+signal base_damage(damage)
 
-var speed = 150
+var speed = 300
 var hp = 500
+var base_damage = 21
 
 onready var health_bar = $HealthBar
 onready var impact_area = $ImpactArea
@@ -17,7 +19,11 @@ func _ready():
 
 
 func _physics_process(delta):
+	if unit_offset == 1.0:
+		emit_signal("base_damage", base_damage)
+		queue_free()
 	move(delta)
+	
 
 
 func move(delta):

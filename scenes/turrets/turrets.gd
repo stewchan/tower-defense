@@ -9,6 +9,7 @@ var category
 
 onready var animation_player = $AnimationPlayer
 
+
 func _ready():
 	if built:
 		var radius = 0.5 * GameData.tower_data[type]["range"]
